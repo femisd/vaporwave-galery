@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.5e94ed4c.chunk.css",
+    "main.js": "/static/js/main.a4a91323.chunk.js",
+    "main.js.map": "/static/js/main.a4a91323.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.81e62f9c.js",
+    "runtime-main.js.map": "/static/js/runtime-main.81e62f9c.js.map",
+    "static/js/2.6c26b387.chunk.js": "/static/js/2.6c26b387.chunk.js",
+    "static/js/2.6c26b387.chunk.js.map": "/static/js/2.6c26b387.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.bf7d29bebc51711bcb2df07365b3bdd8.js": "/precache-manifest.bf7d29bebc51711bcb2df07365b3bdd8.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.5e94ed4c.chunk.css.map": "/static/css/main.5e94ed4c.chunk.css.map",
+    "static/js/2.6c26b387.chunk.js.LICENSE.txt": "/static/js/2.6c26b387.chunk.js.LICENSE.txt",
+    "static/media/ms_sans_serif.woff2": "/static/media/ms_sans_serif.1d4d404a.woff2",
+    "static/media/ms_sans_serif_bold.woff2": "/static/media/ms_sans_serif_bold.cb1c7473.woff2",
+    "static/media/winLogo.png": "/static/media/winLogo.965be2a2.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.81e62f9c.js",
+    "static/js/2.6c26b387.chunk.js",
+    "static/css/main.5e94ed4c.chunk.css",
+    "static/js/main.a4a91323.chunk.js"
+  ]
+}
