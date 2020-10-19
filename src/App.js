@@ -84,8 +84,6 @@ function App() {
                     <div className="closeIconRight"></div>
                   </div>
                 </Button>
-
-
               </WindowHeader>
 
               <WindowContent className="infoContent">
