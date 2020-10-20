@@ -42,31 +42,59 @@ const GlobalStyles = createGlobalStyle`
   ${styleReset}
 `;
 
+//update hook
+// Workaround to handle the slow image scraper.
+function useForceUpdate() {
+  const [value, setValue] = useState(0); // integer state
+  return () => setValue(value => ++value); // update the state to force render
+}
+
 function App() {
 
   const [galleryList, setGalleryList] = useState([]);
   const [open, setOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }));
+  const forceUpdate = useForceUpdate();
+  const [isInfoClosed, setInfoClosed] = useState(false)
 
+  let gallery = [];
+  const artists = ["crimsondawn97", "floatingheavy", "lofi.icon", "seerlight", "depression_vaporwave", "shapesoftime", "vapor_waveart"]
 
   useEffect(() => {
-    fetchImagesByUsername("crimsondawn97");
-
+    fetchImagesByUsernames(artists);
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }));
-    }, 1000);
+      setGalleryList(gallery);
+      forceUpdate();
+      console.log("gallery updated")
+    }, 1);
     return () => clearInterval(interval);
 
   }, []);
 
 
+  const fetchImagesByUsernames = (usernames) => {
+    usernames.forEach(username => {
+      ig.scrapeUserPage(username).then(result => {
+        if (result) {
+          result.medias.map(el => {
+            el.username = username
+            gallery.push(el);
+          })
+        }
+      });
 
-  const fetchImagesByUsername = (username) => {
-    ig.scrapeUserPage(username).then(result => {
-      if (result) {
-        setGalleryList(galleryList.concat(result.medias));
-      }
-    });
+    })
+  }
+
+  const closeArtWindow = (index) => {
+    console.log(index)
+    setGalleryList(galleryList.splice(index,1));
+    console.log(galleryList[index])
+  }
+
+  const closeInfo = () => {
+    setInfoClosed(true);
   }
 
 
@@ -75,49 +103,51 @@ function App() {
       <GlobalStyles />
       <ThemeProvider theme={original}>
         <>
-            <Window className='window-info'>
-              <WindowHeader className='window-header'>
-                <span className="headerSpan">VaporwaveGallery.exe</span>
+        <div style={{minHeight: "100vh"}}>
+          <Window className='window-info' style={isInfoClosed ? {display: "none"} : {}}>
+            <WindowHeader className='window-header'>
+              <span className="headerSpan">VaporwaveGallery.exe</span>
 
-                <Button className="closeBtn">
-                  <div className="closeIconLeft">
-                    <div className="closeIconRight"></div>
-                  </div>
-                </Button>
-              </WindowHeader>
+              <Button className="closeBtn" onClick={() => closeInfo()}>
+                <div className="closeIconLeft">
+                  <div className="closeIconRight"></div>
+                </div>
+              </Button>
+            </WindowHeader>
 
-              <WindowContent className="infoContent">
-                <p>
-                  Welcome to Vaporwave Gallery!
+            <WindowContent className="infoContent">
+              <p>
+                Welcome to Vaporwave Gallery!
              </p>
-                <p>An open source digital art gallery with a vaporwave aesthetic.</p>
-              </WindowContent>
-            </Window>
-            <br />
+              <p>A digital art gallery with a vaporwave aesthetic.</p>
+            </WindowContent>
+          </Window>
+          <br />
 
-            {galleryList.map((content, index) => {
-              return (
-                <Window className='window' key={index}>
-                  <WindowHeader className='window-header'>
-                    <a href="https://www.instagram.com/crimsondawn97/" target="_blank">
-                    <span className="headerSpan">crimsondawn97.jpg</span>
-                    </a>
-                    <Button className="closeBtn">
-                      <div className="closeIconLeft">
-                        <div className="closeIconRight"></div>
-                      </div>
-                    </Button>
+          {galleryList.map((content, index) => {
+            return (
+              <Window className='window' key={index}>
+                <WindowHeader className='window-header'>
+                  <a href={`https://www.instagram.com/${content.username}/`} target="_blank">
+                    <span className="headerSpan">{content.username}.jpg</span>
+                  </a>
+                  <Button className="closeBtn" onClick={() => closeArtWindow(index)}>
+                    <div className="closeIconLeft">
+                      <div className="closeIconRight"></div>
+                    </div>
+                  </Button>
 
-                  </WindowHeader>
+                </WindowHeader>
 
-                  <WindowContent>
-                    <img src={content.display_url} width="100%" height="100%" />
-                  </WindowContent>
-                </Window>
+                <WindowContent>
+                  <img src={content.display_url} width="100%" height="100%" />
+                </WindowContent>
+              </Window>
 
-              )
-            })}
-          <AppBar style={{ bottom: "0%", position: "sticky", width: "100%", zIndex: 99}}>
+            )
+          })}
+          </div>
+          <AppBar style={{ bottom: "0%", position: "sticky", width: "100%", zIndex: 99 }}>
             <Toolbar style={{ justifyContent: 'space-between' }}>
               <div style={{ position: 'relative', display: 'inline-block' }}>
                 <Button
@@ -141,27 +171,34 @@ function App() {
                     }}
                     onClick={() => setOpen(false)}
                   >
-                    <a href="https://www.instagram.com/crimsondawn97/" target="_blank">
-                      <ListItem>
-                        <span role='img' aria-label='📷' style={{ marginRight: "3px" }}>
-                          📷
-                        </span>
-                        Check Out The Artist
-                        </ListItem>
-                    </a>
+                    <ListItem disabled>Check Out The Artists</ListItem>
+                    <Divider />
 
+                    {artists.map((artist, index) => {
+                      return (
+                        <a key={index} href={`https://www.instagram.com/${artist}/`} target="_blank">
+                          <ListItem>
+                            <span role='img' aria-label='📁' style={{marginRight: "2px"}}>
+                            📁
+                          </span>
+                            {artist}
+                          </ListItem>
+                        </a>
+                      )
+                    })}
+                    <Divider />
                     <a href="https://github.com/femisd" target="_blank">
                       <ListItem>
                         <span role='img' aria-label='💻'>
-                          💻
-                        </span>
-                        My Github
-                      </ListItem>
+                        ⚙️
+                          </span>
+                          My Github
+                        </ListItem>
                     </a>
-                    <Divider />
+
                     <ListItem disabled>
-                      <span role='img' aria-label='🔙'>
-                        🔙
+                      <span role='img' aria-label='🖥️'>
+                      🖥️
                 </span>
                 Logout
               </ListItem>
